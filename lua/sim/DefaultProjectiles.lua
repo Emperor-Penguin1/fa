@@ -24,9 +24,6 @@ EmitterProjectile = Class(Projectile) {
 
     OnCreate = function(self)
         Projectile.OnCreate(self)
-        for i in self.FxTrails do
-            CreateEmitterOnEntity(self, self.Army, self.FxTrails[i]):ScaleEmitter(self.FxTrailScale):OffsetEmitter(0, 0, self.FxTrailOffset)
-        end
     end,
 }
 
@@ -198,21 +195,6 @@ MultiPolyTrailProjectile = Class(EmitterProjectile) {
 
     OnCreate = function(self)
         EmitterProjectile.OnCreate(self)
-        if self.PolyTrails then
-            local NumPolyTrails = table.getn(self.PolyTrails)
-
-            if self.RandomPolyTrails ~= 0 then
-                local index = nil
-                for i = 1, self.RandomPolyTrails do
-                    index = math.floor(Random(1, NumPolyTrails))
-                    CreateTrail(self, -1, self.Army, self.PolyTrails[index]):OffsetEmitter(0, 0, self.PolyTrailOffset[index])
-                end
-            else
-                for i = 1, NumPolyTrails do
-                    CreateTrail(self, -1, self.Army, self.PolyTrails[i]):OffsetEmitter(0, 0, self.PolyTrailOffset[i])
-                end
-            end
-        end
     end,
 }
 
