@@ -571,14 +571,14 @@ Unit = Class(moho.unit_methods) {
     end,
 
     OnPaused = function(self)
-        if self:IsUnitState('Building') or self:IsUnitState('Upgrading') or self:IsUnitState('Repairing') then
+        if self:IsUnitState('Building') or self:IsUnitState('Upgrading') or self:IsUnitState('Repairing') or self:IsUnitState('SiloBuildingAmmo') then
             self:SetActiveConsumptionInactive()
             self:StopUnitAmbientSound('ConstructLoop')
         end
     end,
 
     OnUnpaused = function(self)
-        if self:IsUnitState('Building') or self:IsUnitState('Upgrading') or self:IsUnitState('Repairing') then
+        if self:IsUnitState('Building') or self:IsUnitState('Upgrading') or self:IsUnitState('Repairing') or self:IsUnitState('SiloBuildingAmmo') then
             self:SetActiveConsumptionActive()
             self:PlayUnitAmbientSound('ConstructLoop')
         end
@@ -1006,8 +1006,8 @@ Unit = Class(moho.unit_methods) {
                 end
             end
 
-            energy = math.max(1, energy * (self.EnergyBuildAdjMod or 1))
-            mass = math.max(1, mass * (self.MassBuildAdjMod or 1))
+            energy = math.max(0, energy * (self.EnergyBuildAdjMod or 1))
+            mass = math.max(0, mass * (self.MassBuildAdjMod or 1))
             energy_rate = energy / time
             mass_rate = mass / time
         end
@@ -2326,11 +2326,15 @@ Unit = Class(moho.unit_methods) {
     OnSiloBuildStart = function(self, weapon)
         self.SiloWeapon = weapon
         self.SiloProjectile = weapon:GetProjectileBlueprint()
+        self.ActiveConsumption = self:IsPaused()
+        self:UpdateConsumptionValues()
     end,
 
     OnSiloBuildEnd = function(self, weapon)
         self.SiloWeapon = nil
         self.SiloProjectile = nil
+        self.ActiveConsumption = ((self:IsUnitState('Building') or self:IsUnitState('Upgrading') or self:IsUnitState('Repairing') or self:IsUnitState('SiloBuildingAmmo')) and not self:IsPaused())
+        self:UpdateConsumptionValues()
     end,
 
     -------------------------------------------------------------------------------------------
